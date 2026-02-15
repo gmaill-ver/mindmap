@@ -20,17 +20,17 @@ export function colorByDepth(d: number): string {
 export function createDefaultMap() {
   const rootId = uid();
   const nodes: MindNode[] = [
-    { id: rootId, label: 'メインテーマ', parentId: null, color: COLS[0], icon: '🧠', collapsed: false, notes: '' },
+    { id: rootId, label: 'メインテーマ', parentId: null, color: COLS[0], icon: '', collapsed: false, notes: '' },
   ];
   [
-    { l: 'アイデア', i: '💡' },
-    { l: 'タスク', i: '✅' },
-    { l: 'リソース', i: '🔗' },
-    { l: 'メモ', i: '📝' },
+    { l: 'アイデア' },
+    { l: 'タスク' },
+    { l: 'リソース' },
+    { l: 'メモ' },
   ].forEach((c, idx) => {
     nodes.push({
       id: uid(), label: c.l, parentId: rootId, color: COLS[(idx + 1) % COLS.length],
-      icon: c.i, collapsed: false, notes: '',
+      icon: '', collapsed: false, notes: '',
     });
   });
   return { rootId, nodes };
@@ -39,36 +39,36 @@ export function createDefaultMap() {
 export const TEMPLATES: Template[] = [
   {
     name: '空のマップ',
-    icon: '🗒️',
+    icon: '',
     description: '空白のマインドマップ',
     create: () => {
       const rootId = uid();
       return {
         rootId,
-        nodes: [{ id: rootId, label: 'メインテーマ', parentId: null, color: COLS[0], icon: '🧠', collapsed: false, notes: '' }],
+        nodes: [{ id: rootId, label: 'メインテーマ', parentId: null, color: COLS[0], icon: '', collapsed: false, notes: '' }],
       };
     },
   },
   {
     name: 'デフォルト',
-    icon: '🧠',
+    icon: '',
     description: '基本的なマインドマップ',
     create: createDefaultMap,
   },
   {
     name: '会議メモ',
-    icon: '📋',
+    icon: '',
     description: '会議の議事録を整理',
     create: () => {
       const rootId = uid();
       const nodes: MindNode[] = [
-        { id: rootId, label: '会議メモ', parentId: null, color: '#8b5cf6', icon: '📋', collapsed: false, notes: '' },
+        { id: rootId, label: '会議メモ', parentId: null, color: '#8b5cf6', icon: '', collapsed: false, notes: '' },
       ];
       const topics = [
-        { l: '議題', i: '📝', children: ['議題1', '議題2', '議題3'] },
-        { l: '決定事項', i: '✅', children: ['決定1', '決定2'] },
-        { l: 'アクションアイテム', i: '🎯', children: ['担当者A', '担当者B'] },
-        { l: '次回までに', i: '📅', children: ['TODO 1', 'TODO 2'] },
+        { l: '議題', i: '', children: ['議題1', '議題2', '議題3'] },
+        { l: '決定事項', i: '', children: ['決定1', '決定2'] },
+        { l: 'アクションアイテム', i: '', children: ['担当者A', '担当者B'] },
+        { l: '次回までに', i: '', children: ['TODO 1', 'TODO 2'] },
       ];
       topics.forEach((t, ti) => {
         const pid = uid();
@@ -82,19 +82,19 @@ export const TEMPLATES: Template[] = [
   },
   {
     name: 'プロジェクト計画',
-    icon: '🚀',
+    icon: '',
     description: 'プロジェクトの計画を立てる',
     create: () => {
       const rootId = uid();
       const nodes: MindNode[] = [
-        { id: rootId, label: 'プロジェクト名', parentId: null, color: '#3b82f6', icon: '🚀', collapsed: false, notes: '' },
+        { id: rootId, label: 'プロジェクト名', parentId: null, color: '#3b82f6', icon: '', collapsed: false, notes: '' },
       ];
       const topics = [
-        { l: '目的・ゴール', i: '🎯', children: ['KPI 1', 'KPI 2'] },
-        { l: 'スケジュール', i: '📅', children: ['Phase 1', 'Phase 2', 'Phase 3'] },
-        { l: 'チーム', i: '👥', children: ['リーダー', 'メンバー'] },
-        { l: 'リスク', i: '⚠️', children: ['リスク1', '対策'] },
-        { l: 'リソース', i: '💰', children: ['予算', 'ツール'] },
+        { l: '目的・ゴール', i: '', children: ['KPI 1', 'KPI 2'] },
+        { l: 'スケジュール', i: '', children: ['Phase 1', 'Phase 2', 'Phase 3'] },
+        { l: 'チーム', i: '', children: ['リーダー', 'メンバー'] },
+        { l: 'リスク', i: '', children: ['リスク1', '対策'] },
+        { l: 'リソース', i: '', children: ['予算', 'ツール'] },
       ];
       topics.forEach((t, ti) => {
         const pid = uid();
@@ -108,18 +108,18 @@ export const TEMPLATES: Template[] = [
   },
   {
     name: 'SWOT分析',
-    icon: '📊',
+    icon: '',
     description: '強み・弱み・機会・脅威を分析',
     create: () => {
       const rootId = uid();
       const nodes: MindNode[] = [
-        { id: rootId, label: 'SWOT分析', parentId: null, color: '#8b5cf6', icon: '📊', collapsed: false, notes: '' },
+        { id: rootId, label: 'SWOT分析', parentId: null, color: '#8b5cf6', icon: '', collapsed: false, notes: '' },
       ];
       const swot = [
-        { l: 'Strengths (強み)', i: '💪', c: '#22c55e', children: ['強み1', '強み2'] },
-        { l: 'Weaknesses (弱み)', i: '📉', c: '#f43f5e', children: ['弱み1', '弱み2'] },
-        { l: 'Opportunities (機会)', i: '🌟', c: '#3b82f6', children: ['機会1', '機会2'] },
-        { l: 'Threats (脅威)', i: '⚠️', c: '#f59e0b', children: ['脅威1', '脅威2'] },
+        { l: 'Strengths (強み)', i: '', c: '#22c55e', children: ['強み1', '強み2'] },
+        { l: 'Weaknesses (弱み)', i: '', c: '#f43f5e', children: ['弱み1', '弱み2'] },
+        { l: 'Opportunities (機会)', i: '', c: '#3b82f6', children: ['機会1', '機会2'] },
+        { l: 'Threats (脅威)', i: '', c: '#f59e0b', children: ['脅威1', '脅威2'] },
       ];
       swot.forEach(s => {
         const pid = uid();
@@ -133,17 +133,17 @@ export const TEMPLATES: Template[] = [
   },
   {
     name: 'KPT振り返り',
-    icon: '🔄',
+    icon: '',
     description: 'Keep / Problem / Try の振り返り',
     create: () => {
       const rootId = uid();
       const nodes: MindNode[] = [
-        { id: rootId, label: 'KPT振り返り', parentId: null, color: '#8b5cf6', icon: '🔄', collapsed: false, notes: '' },
+        { id: rootId, label: 'KPT振り返り', parentId: null, color: '#8b5cf6', icon: '', collapsed: false, notes: '' },
       ];
       const kpt = [
-        { l: 'Keep (続けること)', i: '✅', c: '#22c55e', children: ['良かったこと1', '良かったこと2'] },
-        { l: 'Problem (問題点)', i: '❌', c: '#f43f5e', children: ['問題1', '問題2'] },
-        { l: 'Try (試すこと)', i: '💡', c: '#3b82f6', children: ['改善案1', '改善案2'] },
+        { l: 'Keep (続けること)', i: '', c: '#22c55e', children: ['良かったこと1', '良かったこと2'] },
+        { l: 'Problem (問題点)', i: '', c: '#f43f5e', children: ['問題1', '問題2'] },
+        { l: 'Try (試すこと)', i: '', c: '#3b82f6', children: ['改善案1', '改善案2'] },
       ];
       kpt.forEach(k => {
         const pid = uid();
@@ -157,18 +157,17 @@ export const TEMPLATES: Template[] = [
   },
   {
     name: '週次計画',
-    icon: '📅',
+    icon: '',
     description: '週のタスクを整理',
     create: () => {
       const rootId = uid();
       const nodes: MindNode[] = [
-        { id: rootId, label: '今週の計画', parentId: null, color: '#8b5cf6', icon: '📅', collapsed: false, notes: '' },
+        { id: rootId, label: '今週の計画', parentId: null, color: '#8b5cf6', icon: '', collapsed: false, notes: '' },
       ];
       const days = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日'];
-      const icons = ['🌙', '🔥', '💧', '🌿', '⭐'];
       days.forEach((day, i) => {
         const pid = uid();
-        nodes.push({ id: pid, label: day, parentId: rootId, color: COLS[(i + 1) % COLS.length], icon: icons[i], collapsed: false, notes: '' });
+        nodes.push({ id: pid, label: day, parentId: rootId, color: COLS[(i + 1) % COLS.length], icon: '', collapsed: false, notes: '' });
         ['タスク1', 'タスク2'].forEach(t => {
           nodes.push({ id: uid(), label: t, parentId: pid, color: COLS[(i + 2) % COLS.length], icon: '', collapsed: false, notes: '' });
         });
