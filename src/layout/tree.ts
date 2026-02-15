@@ -2,10 +2,10 @@ import type { MindNode, LayoutNode } from '../types';
 import { measureText } from '../utils/text';
 
 const NODE_HEIGHT = 36;
-const VERTICAL_GAP = 7;
+const VERTICAL_GAP = 5;
 
 function hGap(depth: number): number {
-  return Math.max(60, 100 - depth * 10);
+  return Math.max(40, 67 - depth * 7);
 }
 
 /** Text-only node width: icon + text + padding */

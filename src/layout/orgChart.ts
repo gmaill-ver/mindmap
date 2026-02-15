@@ -16,8 +16,8 @@ export function orgChartLayout(nodes: MindNode[], rootId: string): Record<string
     if (n.parentId && nm[n.parentId]) nm[n.parentId]._ch.push(n.id);
   });
 
-  const hGap = 60;
-  const vGap = 120;
+  const hGap = 40;
+  const vGap = 80;
 
   function subtreeWidth(id: string): number {
     const n = nm[id];

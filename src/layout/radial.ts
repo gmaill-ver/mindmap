@@ -32,7 +32,7 @@ export function radialLayout(nodes: MindNode[], rootId: string): Record<string, 
     if (n.collapsed || !n._ch.length) return;
 
     const tw = n._ch.reduce((s, c) => s + 1 + countVisible(c) * 0.5, 0);
-    const rad = (d === 0 ? 220 : 180) + Math.min(d * 20, 60);
+    const rad = (d === 0 ? 147 : 120) + Math.min(d * 13, 40);
     let ca = sa;
 
     n._ch.forEach(cid => {
