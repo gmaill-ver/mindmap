@@ -195,9 +195,24 @@ export function MapProvider({ children }: { children: ReactNode }) {
   // Initialize: load from cloud if logged in, otherwise from IndexedDB
   useEffect(() => {
     (async () => {
-      let all: MindMap[];
+      let all: MindMap[] = [];
       if (user) {
-        all = await loadMapsFromCloud(user.uid);
+        try {
+          all = await loadMapsFromCloud(user.uid);
+        } catch (e) {
+          console.error('Firestore load failed, falling back to IndexedDB:', e);
+          all = await loadMaps();
+        }
+        // Migrate: if cloud is empty but IndexedDB has data, push to cloud
+        if (!all.length) {
+          const local = await loadMaps();
+          if (local.length) {
+            all = local;
+            for (const m of local) {
+              try { await saveMapToCloud(user.uid, m); } catch {}
+            }
+          }
+        }
       } else {
         all = await loadMaps();
       }
@@ -213,10 +228,9 @@ export function MapProvider({ children }: { children: ReactNode }) {
         };
         loadMapData(mapData);
         if (user) {
-          await saveMapToCloud(user.uid, mapData);
-        } else {
-          await saveMap(mapData);
+          try { await saveMapToCloud(user.uid, mapData); } catch {}
         }
+        await saveMap(mapData);
         setMaps([mapData]);
       }
     })();
