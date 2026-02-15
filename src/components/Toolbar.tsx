@@ -1,7 +1,6 @@
 import { useMapContext } from '../context/MapContext';
 import { useAuthContext } from '../context/AuthContext';
 import type { LayoutType } from '../types';
-import { exportJSON, exportPNG, exportSVG, exportMarkdown } from '../utils/export';
 
 const LAYOUT_ICONS: Record<LayoutType, string> = {
   tree: '↔️',
@@ -22,7 +21,6 @@ export function Toolbar() {
     theme, setTheme, layout, setLayout,
     setShowShortcuts, setShowMapList, setShowTemplates, setShowOutline,
     setSearchOpen, showOutline,
-    toast, svgRef, lo, vis, nodes, currentMapId,
     focusRootId, setFocusRootId,
     setPresentationMode,
   } = useMapContext();
@@ -38,30 +36,6 @@ export function Toolbar() {
     const themes = ['dark', 'light', 'colorful', 'minimal', 'ocean', 'forest'] as const;
     const idx = themes.indexOf(theme);
     setTheme(themes[(idx + 1) % themes.length]);
-  };
-
-  const handleExportJSON = () => {
-    exportJSON(currentMapId!, title, rootId!, nodes, theme, layout);
-    toast('📄 JSONエクスポート完了');
-  };
-
-  const handleExportPNG = () => {
-    if (svgRef.current) {
-      exportPNG(svgRef.current, lo, vis, rootId!, title, theme);
-      toast('🖼 PNGエクスポート完了');
-    }
-  };
-
-  const handleExportSVG = () => {
-    if (svgRef.current) {
-      exportSVG(svgRef.current, lo, vis, rootId!, title);
-      toast('📐 SVGエクスポート完了');
-    }
-  };
-
-  const handleExportMD = () => {
-    exportMarkdown(nodes, rootId!, title);
-    toast('📝 Markdownエクスポート完了');
   };
 
   return (
@@ -95,11 +69,6 @@ export function Toolbar() {
       {focusRootId && (
         <button className="bb" onClick={() => setFocusRootId(null)} title="フォーカス解除">🔙</button>
       )}
-      <div className="dv" />
-      <button className="bb" onClick={handleExportJSON} title="JSON出力">💾</button>
-      <button className="bb" onClick={handleExportPNG} title="PNG出力">🖼</button>
-      <button className="bb" onClick={handleExportSVG} title="SVG出力">📐</button>
-      <button className="bb" onClick={handleExportMD} title="MD出力">📝</button>
       <div className="dv" />
       <button className="bb" onClick={() => setPresentationMode(true)} title="プレゼンテーション">🎬</button>
       <button className="bb" onClick={cycleTheme} title={`テーマ: ${theme}`}>

@@ -14,8 +14,6 @@ const SHORTCUTS = [
   ['ズームイン', 'Ctrl++'],
   ['ズームアウト', 'Ctrl+-'],
   ['保存', 'Ctrl+S'],
-  ['JSON出力', 'Ctrl+E'],
-  ['PNG出力', 'Ctrl+Shift+E'],
   ['ショートカット', '?'],
 ];
 

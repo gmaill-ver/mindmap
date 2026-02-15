@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useMapContext } from '../context/MapContext';
-import { exportJSON, exportPNG } from '../utils/export';
 
 export function useKeyboard() {
   const {
@@ -10,8 +9,7 @@ export function useKeyboard() {
     showShortcuts, setShowShortcuts, setShowMapList, setSelectedId, setPanelOpen,
     setContextMenu, setSearchOpen,
     focusRootId, setFocusRootId, setRelationshipMode,
-    rootId, nodes, currentMapId, title, theme, layout, lo, vis,
-    svgRef, toast,
+    rootId, toast,
   } = useMapContext();
 
   useEffect(() => {
@@ -56,22 +54,6 @@ export function useKeyboard() {
       // Save
       if (ct && e.key === 's') { toast('💾 保存しました'); e.preventDefault(); return; }
 
-      // Export
-      if (ct && e.key === 'e' && !e.shiftKey) {
-        exportJSON(currentMapId!, title, rootId!, nodes, theme, layout);
-        toast('📄 JSONエクスポート完了');
-        e.preventDefault();
-        return;
-      }
-      if (ct && ((e.key === 'e' && e.shiftKey) || e.key === 'E')) {
-        if (svgRef.current) {
-          exportPNG(svgRef.current, lo, vis, rootId!, title, theme);
-          toast('🖼 PNGエクスポート完了');
-        }
-        e.preventDefault();
-        return;
-      }
-
       // Node operations (require selection)
       if (!selectedId) return;
 
@@ -90,6 +72,6 @@ export function useKeyboard() {
     undo, redo, centerView, setZoom, showShortcuts, setShowShortcuts, setShowMapList,
     setSelectedId, setPanelOpen, setContextMenu, setSearchOpen,
     focusRootId, setFocusRootId, setRelationshipMode,
-    rootId, nodes, currentMapId, title, theme, layout, lo, vis, svgRef, toast,
+    rootId, toast,
   ]);
 }

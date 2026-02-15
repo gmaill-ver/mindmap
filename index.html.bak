@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MindFlow - マインドマップ</title>
+<meta name="theme-color" content="#0a0a0f">
+<link rel="manifest" href="manifest.json">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap');
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a26;--bg4:#222233;--tx:#e8e8f0;--tx2:#8888a0;--txM:#55556a;--ac:#8b5cf6;--acH:#a78bfa;--acD:rgba(139,92,246,.15);--bd:rgba(255,255,255,.06);--sh:0 8px 32px rgba(0,0,0,.4);--shS:0 2px 8px rgba(0,0,0,.3);--r:12px;--rs:8px;--rx:6px;--t:.2s cubic-bezier(.4,0,.2,1);--f:'DM Sans',sans-serif;--fm:'JetBrains Mono',monospace}
+.light{--bg:#f5f5f7;--bg2:#fff;--bg3:#e8e8ed;--bg4:#fff;--tx:#1a1a2e;--tx2:#666680;--txM:#9999aa;--bd:rgba(0,0,0,.08);--sh:0 8px 32px rgba(0,0,0,.1);--shS:0 2px 8px rgba(0,0,0,.06)}
+html,body{width:100%;height:100%;overflow:hidden;font-family:var(--f);background:var(--bg);color:var(--tx);-webkit-font-smoothing:antialiased}
+#app{width:100%;height:100%}
+.cv{width:100%;height:100%;position:relative;overflow:hidden;cursor:grab}.cv.pn{cursor:grabbing}.cv.nd{cursor:move}
+svg.ms{width:100%;height:100%;position:absolute;top:0;left:0}
+.cn{fill:none;stroke-width:2.5;stroke-linecap:round;opacity:.6}.cn:hover{opacity:1}
+.node{cursor:pointer;user-select:none}.node:hover{filter:brightness(1.1)}.node.sel{filter:brightness(1.15) drop-shadow(0 0 12px rgba(139,92,246,.4))}
+.nt{font-family:var(--f);font-size:14px;font-weight:500;fill:#fff;text-anchor:middle;dominant-baseline:central;pointer-events:none}.nt.rt{font-size:16px;font-weight:700}
+.ni{font-size:14px;text-anchor:middle;dominant-baseline:central}
+.ncb{cursor:pointer;opacity:0;transition:opacity var(--t)}.node:hover .ncb{opacity:1}
+.ncb circle{fill:var(--bg3);stroke:var(--txM);stroke-width:1.5}.ncb text{fill:var(--tx2);font-size:12px;font-weight:700;text-anchor:middle;dominant-baseline:central}
+@keyframes na{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}.na{animation:na .3s cubic-bezier(.34,1.56,.64,1)}
+
+.tb{position:fixed;top:16px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:4px;padding:6px 8px;background:var(--bg2);border:1px solid var(--bd);border-radius:14px;backdrop-filter:blur(20px);box-shadow:var(--sh);z-index:100}
+.bb{display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:0;border:0;border-radius:var(--rs);color:var(--tx2);cursor:pointer;transition:all var(--t);font-size:16px}.bb:hover{background:var(--acD);color:var(--ac)}.bb.ac{background:var(--ac);color:#fff}
+.dv{width:1px;height:24px;background:var(--bd);margin:0 4px}
+.ttl{font-size:13px;font-weight:600;color:var(--tx);padding:0 8px;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.zc{position:fixed;bottom:52px;right:24px;display:flex;flex-direction:column;gap:4px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:4px;box-shadow:var(--shS);z-index:100}
+.zb{display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:0;border:0;border-radius:var(--rs);color:var(--tx2);cursor:pointer;transition:all var(--t);font-size:18px}.zb:hover{background:var(--acD);color:var(--ac)}
+.zl{font-size:11px;font-family:var(--fm);color:var(--txM);text-align:center;padding:2px 0}
+
+.sp{position:fixed;top:0;right:0;width:320px;height:100%;background:var(--bg2);border-left:1px solid var(--bd);box-shadow:-8px 0 32px rgba(0,0,0,.2);z-index:200;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto}.sp.op{transform:translateX(0)}
+.sph{display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid var(--bd)}.sph h3{font-size:14px;font-weight:600}
+.spc{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:0;border:0;border-radius:var(--rx);color:var(--tx2);cursor:pointer;font-size:18px}.spc:hover{background:var(--bg3);color:var(--tx)}
+.sps{padding:16px 20px;border-bottom:1px solid var(--bd)}.sps:last-child{border:0}
+.spl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--txM);margin-bottom:10px}
+.spi{width:100%;padding:10px 12px;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);font-family:var(--f);font-size:14px;outline:0}.spi:focus{border-color:var(--ac)}
+.spta{width:100%;padding:10px 12px;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);font-family:var(--f);font-size:13px;outline:0;resize:vertical;min-height:80px}.spta:focus{border-color:var(--ac)}
+.cg{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.cw{width:100%;aspect-ratio:1;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all var(--t)}.cw:hover{transform:scale(1.2)}.cw.at{border-color:#fff;box-shadow:0 0 8px rgba(255,255,255,.3)}
+.ig{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.ib{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rx);cursor:pointer;font-size:16px;transition:all var(--t)}.ib:hover{background:var(--acD);border-color:var(--ac)}.ib.at{background:var(--ac);border-color:var(--ac)}
+
+.cm{position:fixed;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:4px;box-shadow:var(--sh);z-index:500;min-width:180px}
+.ci{display:flex;align-items:center;gap:10px;padding:8px 12px;background:0;border:0;border-radius:var(--rx);color:var(--tx);font-family:var(--f);font-size:13px;cursor:pointer;width:100%;text-align:left;transition:all var(--t)}.ci:hover{background:var(--acD);color:var(--ac)}.ci .ck{margin-left:auto;font-size:11px;font-family:var(--fm);color:var(--txM)}.ci.dg{color:#f43f5e}.ci.dg:hover{background:rgba(244,63,94,.1)}
+.cdv{height:1px;background:var(--bd);margin:4px 0}
+
+.tc{position:fixed;bottom:52px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;flex-direction:column;gap:8px;align-items:center}
+.ts{padding:10px 20px;background:var(--bg4);border:1px solid var(--bd);border-radius:10px;color:var(--tx);font-size:13px;font-weight:500;box-shadow:var(--sh);animation:ti .3s ease,to .3s ease 2.5s forwards;white-space:nowrap}
+@keyframes ti{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}@keyframes to{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}
+
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:600;display:flex;align-items:center;justify-content:center}
+.mdl{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;padding:24px;max-width:480px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:var(--sh)}.mdl h2{font-size:18px;font-weight:700;margin-bottom:16px}
+.skr{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)}.skr:last-child{border:0}.skr span:first-child{font-size:13px;color:var(--tx2)}.skk kbd{padding:3px 8px;background:var(--bg3);border:1px solid var(--bd);border-radius:6px;font-family:var(--fm);font-size:11px;color:var(--tx)}
+
+.mlo{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:600;display:flex;align-items:center;justify-content:center}
+.mlm{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;padding:24px;max-width:500px;width:90%;max-height:70vh;overflow-y:auto;box-shadow:var(--sh)}.mlm h2{font-size:18px;font-weight:700;margin-bottom:4px}.mlm>p{font-size:13px;color:var(--txM);margin-bottom:16px}
+.mi{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:8px;cursor:pointer;transition:all var(--t)}.mi:hover{border-color:var(--ac);background:var(--acD)}
+.mit{font-size:14px;font-weight:600;color:var(--tx)}.mid{font-size:11px;color:var(--txM);margin-top:2px}
+.mdb{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:0;border:0;border-radius:var(--rx);color:var(--txM);cursor:pointer;font-size:14px}.mdb:hover{color:#f43f5e;background:rgba(244,63,94,.1)}
+.nmb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:var(--ac);border:0;border-radius:var(--rs);color:#fff;font-family:var(--f);font-size:14px;font-weight:600;cursor:pointer;margin-top:12px}.nmb:hover{background:var(--acH)}
+
+.ie{position:fixed;z-index:300}.ie input{padding:6px 12px;background:var(--bg4);border:2px solid var(--ac);border-radius:var(--rs);color:var(--tx);font-family:var(--f);font-size:14px;font-weight:500;outline:0;text-align:center;min-width:120px;box-shadow:var(--sh)}
+
+.mmv{position:fixed;bottom:52px;left:24px;width:180px;height:120px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--shS);z-index:100;overflow:hidden;opacity:.8;transition:opacity var(--t)}.mmv:hover{opacity:1}
+
+.sb{position:fixed;bottom:0;left:0;right:0;height:28px;background:var(--bg2);border-top:1px solid var(--bd);display:flex;align-items:center;padding:0 16px;gap:16px;z-index:90;font-size:11px;color:var(--txM)}
+.sbi{display:flex;align-items:center;gap:4px}.sbd{width:6px;height:6px;border-radius:50%;background:#22c55e}.sbd.sv{background:#f59e0b}
+
+@media(max-width:768px){.tb{top:auto;bottom:80px;left:16px;right:16px;transform:none;overflow-x:auto;justify-content:center}.sp{width:100%}.mmv{display:none}.zc{bottom:120px}.sb{display:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script type="module">
+import{createElement as h,useState,useEffect,useRef,useCallback,useMemo,Fragment}from'https://esm.sh/react@18.3.1';
+import{createRoot}from'https://esm.sh/react-dom@18.3.1/client';
+
+const COLS=['#8b5cf6','#06b6d4','#f43f5e','#22c55e','#f59e0b','#ec4899','#3b82f6','#14b8a6','#f97316','#6366f1','#84cc16','#e11d48','#0ea5e9','#a855f7','#10b981','#ef4444'];
+const ICONS=['⭐','💡','🎯','📌','🔥','💎','🚀','⚡','📝','✅','❌','⚠️','💬','🔗','📊','🎨','🧠','❤️','👍','🔑','📁','🏷️','📅','🔔'];
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now().toString(36);
+const colD=d=>d===0?COLS[0]:COLS[d%COLS.length];
+const _cv=document.createElement('canvas');const _cx=_cv.getContext('2d');
+function mT(t,fs=14){_cx.font=`500 ${fs}px DM Sans,sans-serif`;return _cx.measureText(t).width}
+
+// === IndexedDB ===
+const DB='MindFlowDB',SN='maps';
+function odb(){return new Promise((ok,ng)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains(SN))e.target.result.createObjectStore(SN,{keyPath:'id'})};r.onsuccess=e=>ok(e.target.result);r.onerror=e=>ng(e.target.error)})}
+async function sDB(d){const db=await odb();return new Promise((ok,ng)=>{const tx=db.transaction(SN,'readwrite');tx.objectStore(SN).put({...d,updatedAt:Date.now()});tx.oncomplete=ok;tx.onerror=e=>ng(e.target.error)})}
+async function lDB(){const db=await odb();return new Promise((ok,ng)=>{const r=db.transaction(SN,'readonly').objectStore(SN).getAll();r.onsuccess=()=>ok(r.result||[]);r.onerror=e=>ng(e.target.error)})}
+async function dDB(id){const db=await odb();return new Promise((ok,ng)=>{const tx=db.transaction(SN,'readwrite');tx.objectStore(SN).delete(id);tx.oncomplete=ok;tx.onerror=e=>ng(e.target.error)})}
+
+// === Layout Engine ===
+function computeLayout(nodes,rid){
+  const nm={};nodes.forEach(n=>nm[n.id]={...n,_ch:[],_x:0,_y:0});
+  if(!nm[rid])return nm;
+  nodes.forEach(n=>{if(n.parentId&&nm[n.parentId])nm[n.parentId]._ch.push(n.id)});
+  function cv(id){const n=nm[id];if(!n||n.collapsed)return 0;let c=n._ch.length;n._ch.forEach(i=>{c+=cv(i)});return c}
+  function lay(id,cx,cy,sa,ea,d){
+    const n=nm[id];if(!n)return;n._x=n.mx!=null?n.mx:cx;n._y=n.my!=null?n.my:cy;
+    if(n.collapsed||!n._ch.length)return;
+    const tw=n._ch.reduce((s,c)=>s+1+cv(c)*.5,0);
+    const rad=(d===0?220:180)+Math.min(d*20,60);let ca=sa;
+    n._ch.forEach(cid=>{const w=1+cv(cid)*.5;const a=(ea-sa)*(w/tw);const ma=ca+a/2;
+      lay(cid,cx+Math.cos(ma)*rad,cy+Math.sin(ma)*rad,ca,ca+a,d+1);ca+=a});
+  }
+  const r=nm[rid];r._x=r.mx!=null?r.mx:0;r._y=r.my!=null?r.my:0;
+  lay(rid,r._x,r._y,0,Math.PI*2,0);return nm;
+}
+
+function defMap(){
+  const rid=uid();const ns=[{id:rid,label:'メインテーマ',parentId:null,color:COLS[0],icon:'🧠',collapsed:false,notes:''}];
+  [{l:'アイデア',i:'💡'},{l:'タスク',i:'✅'},{l:'リソース',i:'🔗'},{l:'メモ',i:'📝'}].forEach((c,i)=>
+    ns.push({id:uid(),label:c.l,parentId:rid,color:COLS[(i+1)%COLS.length],icon:c.i,collapsed:false,notes:''}));
+  return{id:uid(),title:'新しいマインドマップ',rootId:rid,nodes:ns,createdAt:Date.now(),updatedAt:Date.now()};
+}
+
+// === MAIN APP ===
+function App(){
+  const[maps,sM]=useState([]);const[cid,sCid]=useState(null);const[nodes,sN]=useState([]);const[rid,sRid]=useState(null);const[title,sTit]=useState('');
+  const[sel,sSel]=useState(null);const[edId,sEdId]=useState(null);const[edTx,sEdTx]=useState('');const[edP,sEdP]=useState({x:0,y:0});
+  const[vx,sVx]=useState(0);const[vy,sVy]=useState(0);const[zm,sZm]=useState(1);const[panning,sPn]=useState(false);
+  const ps=useRef({x:0,y:0,vx:0,vy:0});const[drgNode,sDN]=useState(null);const dr=useRef({x:0,y:0,nx:0,ny:0});
+  const[panelO,sPO]=useState(false);const[ctxM,sCtx]=useState(null);const[showSc,sSc]=useState(false);const[showMl,sMl]=useState(false);
+  const[dark,sDk]=useState(true);const[toasts,sTst]=useState([]);const[saving,sSv]=useState(false);
+  const[hist,sHist]=useState([]);const[hIdx,sHi]=useState(-1);const skH=useRef(false);
+  const svgRef=useRef();const contRef=useRef();const asRef=useRef();
+
+  const toast=useCallback(m=>{const id=uid();sTst(p=>[...p,{id,message:m}]);setTimeout(()=>sTst(p=>p.filter(t=>t.id!==id)),3000)},[]);
+  useEffect(()=>{document.body.className=dark?'':'light'},[dark]);
+
+  useEffect(()=>{(async()=>{const all=await lDB();sM(all);if(all.length){ldM(all.sort((a,b)=>b.updatedAt-a.updatedAt)[0])}else{const n=defMap();ldM(n);await sDB(n);sM([n])}})()},[]);
+
+  function ldM(d){sCid(d.id);sN(d.nodes);sRid(d.rootId);sTit(d.title);sSel(null);sPO(false);sHist([d.nodes]);sHi(0);ctrV()}
+  function ctrV(){sVx(window.innerWidth/2);sVy(window.innerHeight/2);sZm(1)}
+
+  // Auto-save
+  useEffect(()=>{if(!cid||!nodes.length)return;clearTimeout(asRef.current);
+    asRef.current=setTimeout(async()=>{sSv(true);
+      const d={id:cid,title,rootId:rid,nodes,createdAt:Date.now(),updatedAt:Date.now()};
+      await sDB(d);sM(p=>{const i=p.findIndex(m=>m.id===cid);if(i>=0){const n=[...p];n[i]=d;return n}return[...p,d]});sSv(false)},800)},[nodes,title,cid,rid]);
+
+  // History
+  useEffect(()=>{if(skH.current){skH.current=false;return}if(!nodes.length)return;
+    sHist(p=>{const n=p.slice(0,hIdx+1);n.push(JSON.parse(JSON.stringify(nodes)));if(n.length>50)n.shift();return n});sHi(p=>Math.min(p+1,50))},[nodes]);
+
+  function undo(){if(hIdx<=0)return;skH.current=true;sHi(hIdx-1);sN(JSON.parse(JSON.stringify(hist[hIdx-1])));toast('↩ 元に戻しました')}
+  function redo(){if(hIdx>=hist.length-1)return;skH.current=true;sHi(hIdx+1);sN(JSON.parse(JSON.stringify(hist[hIdx+1])));toast('↪ やり直しました')}
+  function upN(u){sN(p=>p.map(n=>n.id===u.id?u:n))}
+  function gDep(id){let d=0,c=nodes.find(n=>n.id===id);while(c&&c.parentId){d++;c=nodes.find(n=>n.id===c.parentId)}return d}
+
+  function addChild(pid){
+    const par=nodes.find(n=>n.id===pid);if(!par)return;
+    const nn={id:uid(),label:'新しいノード',parentId:pid,color:colD(gDep(pid)+1),icon:'',collapsed:false,notes:''};
+    sN(p=>[...p.map(n=>n.id===pid?{...n,collapsed:false}:n),nn]);sSel(nn.id);setTimeout(()=>startEd(nn.id),150);
+  }
+  function addSib(nid){
+    const nd=nodes.find(n=>n.id===nid);if(!nd||!nd.parentId)return;
+    const nn={id:uid(),label:'新しいノード',parentId:nd.parentId,color:colD(gDep(nid)),icon:'',collapsed:false,notes:''};
+    sN(p=>[...p,nn]);sSel(nn.id);setTimeout(()=>startEd(nn.id),150);
+  }
+  function delN(nid){
+    if(nid===rid){toast('ルートは削除不可');return}
+    function desc(id){let ids=[id];nodes.filter(n=>n.parentId===id).forEach(c=>{ids=ids.concat(desc(c.id))});return ids}
+    sN(p=>p.filter(n=>!new Set(desc(nid)).has(n.id)));if(sel===nid)sSel(null);toast('🗑 削除しました');
+  }
+  function togCol(nid){sN(p=>p.map(n=>n.id===nid?{...n,collapsed:!n.collapsed}:n))}
+
+  function startEd(nid){
+    const nd=nodes.find(n=>n.id===nid);if(!nd)return;
+    const lo=computeLayout(nodes,rid),ln=lo[nid];if(!ln)return;
+    sEdId(nid);sEdTx(nd.label);sEdP({x:ln._x*zm+vx,y:ln._y*zm+vy});
+  }
+  function finEd(){if(edId){if(edTx.trim()){const nd=nodes.find(n=>n.id===edId);if(nd)upN({...nd,label:edTx.trim()})}sEdId(null)}}
+
+  const lo=useMemo(()=>(!rid||!nodes.length)?{}:computeLayout(nodes,rid),[nodes,rid]);
+  const vis=useMemo(()=>{const v=new Set();function w(id){const n=lo[id];if(!n)return;v.add(id);if(!n.collapsed)n._ch.forEach(c=>w(c))}if(rid)w(rid);return v},[lo,rid]);
+
+  // Mouse handlers
+  function onMD(e){if(e.target.closest('.node')||e.target.closest('.ncb'))return;sPn(true);ps.current={x:e.clientX,y:e.clientY,vx,vy};sCtx(null);sSel(null);sPO(false)}
+  function onMM(e){
+    if(panning){sVx(ps.current.vx+(e.clientX-ps.current.x));sVy(ps.current.vy+(e.clientY-ps.current.y))}
+    if(drgNode){const dx=(e.clientX-dr.current.x)/zm,dy=(e.clientY-dr.current.y)/zm;const nd=nodes.find(n=>n.id===drgNode);if(nd)upN({...nd,mx:dr.current.nx+dx,my:dr.current.ny+dy})}
+  }
+  function onMU(){sPn(false);if(drgNode)sDN(null)}
+  function onWh(e){e.preventDefault();const d=e.deltaY>0?.9:1.1;const nz=Math.max(.2,Math.min(3,zm*d));
+    const rc=contRef.current.getBoundingClientRect();const mx=e.clientX-rc.left,my=e.clientY-rc.top;
+    sVx(p=>mx-(mx-p)*(nz/zm));sVy(p=>my-(my-p)*(nz/zm));sZm(nz)}
+  function onND(e,nid){e.stopPropagation();sSel(nid);const ln=lo[nid];if(ln){sDN(nid);dr.current={x:e.clientX,y:e.clientY,nx:ln._x,ny:ln._y}}}
+  function onNDb(e,nid){e.stopPropagation();startEd(nid)}
+  function onNCx(e,nid){
+    e.preventDefault();e.stopPropagation();sSel(nid);const ir=nid===rid;const nd=nodes.find(n=>n.id===nid);
+    sCtx({x:e.clientX,y:e.clientY,items:[
+      {icon:'➕',label:'子ノード追加',sc:'Tab',action:()=>addChild(nid)},
+      ...(!ir?[{icon:'↔️',label:'兄弟ノード追加',sc:'Enter',action:()=>addSib(nid)}]:[]),
+      {icon:'✏️',label:'名前を編集',sc:'F2',action:()=>startEd(nid)},
+      {icon:nd?.collapsed?'📂':'📁',label:nd?.collapsed?'展開':'折りたたみ',sc:'Space',action:()=>togCol(nid)},
+      {d:1},{icon:'🎨',label:'編集パネル',action:()=>sPO(true)},
+      ...(!ir?[{d:1},{icon:'🗑',label:'削除',sc:'Del',dg:1,action:()=>delN(nid)}]:[]),
+    ]});
+  }
+
+  // Keyboard
+  useEffect(()=>{function hk(e){
+    if(edId){if(e.key==='Enter'){finEd();e.preventDefault()}if(e.key==='Escape'){sEdId(null);e.preventDefault()}return}
+    if(e.key==='?'&&!e.ctrlKey&&!e.metaKey){sSc(p=>!p);e.preventDefault();return}
+    if(e.key==='Escape'){sSel(null);sPO(false);sSc(false);sMl(false);sCtx(null);return}
+    const ct=e.ctrlKey||e.metaKey;
+    if(ct&&e.key==='z'&&!e.shiftKey){undo();e.preventDefault();return}
+    if(ct&&(e.key==='z'&&e.shiftKey||e.key==='Z')){redo();e.preventDefault();return}
+    if(ct&&e.key==='0'){ctrV();e.preventDefault();return}
+    if(ct&&(e.key==='='||e.key==='+')){sZm(z=>Math.min(3,z*1.2));e.preventDefault();return}
+    if(ct&&e.key==='-'){sZm(z=>Math.max(.2,z/1.2));e.preventDefault();return}
+    if(ct&&e.key==='s'){toast('💾 保存しました');e.preventDefault();return}
+    if(ct&&e.key==='e'&&!e.shiftKey){expJSON();e.preventDefault();return}
+    if(ct&&(e.key==='e'&&e.shiftKey||e.key==='E')){expPNG();e.preventDefault();return}
+    if(!sel)return;
+    if(e.key==='Tab'){addChild(sel);e.preventDefault()}
+    else if(e.key==='Enter'){addSib(sel);e.preventDefault()}
+    else if(e.key==='Delete'||e.key==='Backspace'){delN(sel);e.preventDefault()}
+    else if(e.key==='F2'){startEd(sel);e.preventDefault()}
+    else if(e.key===' '){togCol(sel);e.preventDefault()}
+  }window.addEventListener('keydown',hk);return()=>window.removeEventListener('keydown',hk)},[sel,edId,edTx,nodes,hIdx,hist,vx,vy,zm]);
+
+  // Export
+  function expJSON(){
+    const d={id:cid,title,rootId:rid,nodes,exportedAt:new Date().toISOString()};
+    const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`${title||'mindmap'}.json`;a.click();toast('📄 JSONエクスポート完了');
+  }
+  function expPNG(){
+    const svg=svgRef.current;if(!svg)return;
+    const lns=Object.values(lo).filter(n=>vis.has(n.id));if(!lns.length)return;
+    const pad=100;let mnX=1/0,mnY=1/0,mxX=-1/0,mxY=-1/0;
+    lns.forEach(n=>{const w=Math.max(mT(n.label,n.id===rid?16:14)+40,80);mnX=Math.min(mnX,n._x-w/2);mxX=Math.max(mxX,n._x+w/2);mnY=Math.min(mnY,n._y-24);mxY=Math.max(mxY,n._y+24)});
+    const W=mxX-mnX+pad*2,H=mxY-mnY+pad*2;
+    const cl=svg.cloneNode(true);cl.setAttribute('width',W);cl.setAttribute('height',H);cl.setAttribute('viewBox',`${mnX-pad} ${mnY-pad} ${W} ${H}`);
+    const g=cl.querySelector('g');if(g)g.setAttribute('transform','');
+    const sd=new XMLSerializer().serializeToString(cl);const cvs=document.createElement('canvas');cvs.width=W*2;cvs.height=H*2;
+    const c=cvs.getContext('2d');c.scale(2,2);c.fillStyle=dark?'#0a0a0f':'#f5f5f7';c.fillRect(0,0,W,H);
+    const img=new Image();img.onload=()=>{c.drawImage(img,0,0,W,H);const l=document.createElement('a');l.download=`${title||'mindmap'}.png`;l.href=cvs.toDataURL();l.click();toast('🖼 PNGエクスポート完了')};
+    img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(sd)));
+  }
+
+  function newMap(){const n=defMap();ldM(n);sDB(n);sM(p=>[...p,n]);toast('✨ 新規作成しました')}
+  async function swMap(id){const all=await lDB();const t=all.find(m=>m.id===id);if(t)ldM(t)}
+  async function dlMap(id){await dDB(id);sM(p=>p.filter(m=>m.id!==id));if(id===cid){const r=maps.filter(m=>m.id!==id);r.length?ldM(r[0]):newMap()}toast('🗑 削除しました')}
+  function cntHid(nid){let t=0;function c(id){nodes.filter(n=>n.parentId===id).forEach(n=>{t++;c(n.id)})}c(nid);return t}
+
+  const selNode=nodes.find(n=>n.id===sel);
+
+  // Render connections
+  function rC(){return Object.values(lo).filter(n=>n.parentId&&vis.has(n.id)&&vis.has(n.parentId)).map(n=>{
+    const p=lo[n.parentId];if(!p)return null;const dx=n._x-p._x,dy=n._y-p._y;
+    return h('path',{key:`c${n.id}`,className:'cn',d:`M${p._x},${p._y}C${p._x+dx*.4},${p._y+dy*.1},${p._x+dx*.6},${n._y-dy*.1},${n._x},${n._y}`,stroke:n.color||'#666'})})}
+
+  // Render nodes
+  function rN(){return Object.values(lo).filter(n=>vis.has(n.id)).map(n=>{
+    const ir=n.id===rid;const tw=mT(n.label,ir?16:14);const iw=n.icon?22:0;
+    const nw=Math.max(tw+iw+36,ir?140:80);const nh=ir?48:38;const rx=nh/2;
+    const hc=n._ch&&n._ch.length>0;const isSel=n.id===sel;
+    return h('g',{key:n.id,className:`node ${isSel?'sel':''} na`,transform:`translate(${n._x},${n._y})`,
+      onMouseDown:e=>onND(e,n.id),onDoubleClick:e=>onNDb(e,n.id),onContextMenu:e=>onNCx(e,n.id)},
+      h('rect',{x:-nw/2+2,y:2,width:nw,height:nh,rx,ry:rx,fill:'rgba(0,0,0,.2)'}),
+      h('rect',{x:-nw/2,y:0,width:nw,height:nh,rx,ry:rx,fill:n.color||'#666',stroke:isSel?'rgba(255,255,255,.5)':'rgba(255,255,255,.1)',strokeWidth:isSel?2.5:1}),
+      n.icon?h('text',{className:'ni',x:-tw/2-4,y:nh/2},n.icon):null,
+      h('text',{className:`nt ${ir?'rt':''}`,x:n.icon?iw/2-2:0,y:nh/2},n.label),
+      hc?h('g',{className:'ncb',transform:`translate(${nw/2+14},${nh/2})`,onClick:e=>{e.stopPropagation();togCol(n.id)}},
+        h('circle',{r:10}),h('text',{y:1},n.collapsed?`+${cntHid(n.id)}`:'−')):null)})}
+
+  // Minimap
+  function rMM(){
+    const all=Object.values(lo).filter(n=>vis.has(n.id));if(!all.length)return null;
+    let mnX=1/0,mnY=1/0,mxX=-1/0,mxY=-1/0;
+    all.forEach(n=>{mnX=Math.min(mnX,n._x);mxX=Math.max(mxX,n._x);mnY=Math.min(mnY,n._y);mxY=Math.max(mxY,n._y)});
+    const sc=Math.min(180/((mxX-mnX+120)||200),120/((mxY-mnY+120)||200));
+    return h('div',{className:'mmv'},h('svg',{width:180,height:120},
+      h('g',{transform:`translate(${90-((mnX+mxX)/2)*sc},${60-((mnY+mxY)/2)*sc})`},
+        all.map(n=>h('circle',{key:n.id,cx:n._x*sc,cy:n._y*sc,r:n.id===rid?4:2.5,fill:n.color||'#666',opacity:.8})))))}
+
+  return h(Fragment,null,
+    // Canvas
+    h('div',{ref:contRef,className:`cv ${panning?'pn':''} ${drgNode?'nd':''}`,onMouseDown:onMD,onMouseMove:onMM,onMouseUp:onMU,onMouseLeave:onMU,onWheel:onWh},
+      h('svg',{ref:svgRef,className:'ms'},h('g',{transform:`translate(${vx},${vy}) scale(${zm})`},...rC(),...rN()))),
+
+    // Toolbar
+    h('div',{className:'tb'},
+      h('button',{className:'bb',onClick:()=>sMl(true),title:'マップ一覧'},'📂'),h('div',{className:'dv'}),
+      h('div',{className:'ttl',title},title),h('div',{className:'dv'}),
+      h('button',{className:'bb',onClick:undo,title:'元に戻す (Ctrl+Z)'},'↩'),
+      h('button',{className:'bb',onClick:redo,title:'やり直す'},'↪'),h('div',{className:'dv'}),
+      h('button',{className:'bb',onClick:()=>{sel?addChild(sel):addChild(rid)},title:'子ノード追加 (Tab)'},'➕'),
+      h('button',{className:'bb',onClick:()=>{if(sel)sPO(true)},title:'編集パネル'},'🎨'),h('div',{className:'dv'}),
+      h('button',{className:'bb',onClick:expJSON,title:'JSON出力'},'💾'),
+      h('button',{className:'bb',onClick:expPNG,title:'PNG出力'},'🖼'),h('div',{className:'dv'}),
+      h('button',{className:`bb ${!dark?'ac':''}`,onClick:()=>sDk(d=>!d),title:'テーマ切替'},dark?'🌙':'☀️'),
+      h('button',{className:'bb',onClick:()=>sSc(true),title:'ショートカット (?)'},'⌨')),
+
+    // Zoom
+    h('div',{className:'zc'},
+      h('button',{className:'zb',onClick:()=>sZm(z=>Math.min(3,z*1.2))},'+'),
+      h('div',{className:'zl'},`${Math.round(zm*100)}%`),
+      h('button',{className:'zb',onClick:()=>sZm(z=>Math.max(.2,z/1.2))},'−'),
+      h('div',{style:{height:1,background:'var(--bd)',margin:'2px 4px'}}),
+      h('button',{className:'zb',onClick:ctrV,title:'中央に戻る'},'⊙')),
+
+    // Minimap
+    rMM(),
+
+    // Status bar
+    h('div',{className:'sb'},
+      h('div',{className:'sbi'},h('div',{className:`sbd ${saving?'sv':''}`}),saving?'保存中...':'保存済み'),
+      h('div',{className:'sbi'},`ノード: ${vis.size}/${nodes.length}`),
+      h('div',{className:'sbi'},`ズーム: ${Math.round(zm*100)}%`)),
+
+    // Side panel
+    panelO&&selNode?h('div',{className:'sp op'},
+      h('div',{className:'sph'},h('h3',null,'ノード編集'),h('button',{className:'spc',onClick:()=>sPO(false)},'✕')),
+      h('div',{className:'sps'},h('div',{className:'spl'},'ラベル'),h('input',{className:'spi',value:selNode.label,onChange:e=>upN({...selNode,label:e.target.value})})),
+      h('div',{className:'sps'},h('div',{className:'spl'},'メモ'),h('textarea',{className:'spta',value:selNode.notes||'',placeholder:'ノートを追加...',onChange:e=>upN({...selNode,notes:e.target.value})})),
+      h('div',{className:'sps'},h('div',{className:'spl'},'カラー'),h('div',{className:'cg'},COLS.map(c=>h('div',{key:c,className:`cw ${selNode.color===c?'at':''}`,style:{background:c},onClick:()=>upN({...selNode,color:c})})))),
+      h('div',{className:'sps'},h('div',{className:'spl'},'アイコン'),h('div',{className:'ig'},
+        h('button',{className:`ib ${!selNode.icon?'at':''}`,onClick:()=>upN({...selNode,icon:''})},'✕'),
+        ICONS.map(ic=>h('button',{key:ic,className:`ib ${selNode.icon===ic?'at':''}`,onClick:()=>upN({...selNode,icon:ic})},ic))))):null,
+
+    // Inline edit
+    edId?h('div',{className:'ie',style:{left:edP.x-60,top:edP.y-16}},
+      h('input',{autoFocus:true,value:edTx,onChange:e=>sEdTx(e.target.value),onBlur:finEd,
+        onKeyDown:e=>{if(e.key==='Enter')finEd();if(e.key==='Escape')sEdId(null)},
+        style:{width:Math.max(120,mT(edTx)+40)}})):null,
+
+    // Context menu
+    ctxM?(()=>{const ref={current:null};return h('div',{className:'cm',style:{left:ctxM.x,top:ctxM.y},
+      ref:el=>{ref.current=el;if(el){const fn=e=>{if(!el.contains(e.target))sCtx(null)};setTimeout(()=>document.addEventListener('mousedown',fn,{once:true}))}}},
+      ctxM.items.map((it,i)=>it.d?h('div',{key:i,className:'cdv'}):
+        h('button',{key:i,className:`ci ${it.dg?'dg':''}`,onClick:()=>{it.action();sCtx(null)}},
+          h('span',null,it.icon||''),h('span',null,it.label),it.sc?h('span',{className:'ck'},it.sc):null)))})():null,
+
+    // Shortcuts modal
+    showSc?h('div',{className:'mo',onClick:()=>sSc(false)},h('div',{className:'mdl',onClick:e=>e.stopPropagation()},
+      h('h2',null,'⌨️ キーボードショートカット'),
+      [['子ノード追加','Tab'],['兄弟ノード追加','Enter'],['ノード削除','Del / Backspace'],['名前を編集','F2 / ダブルクリック'],['折りたたみ/展開','Space'],['元に戻す','Ctrl+Z'],['やり直す','Ctrl+Shift+Z'],['選択解除','Escape'],['中央に戻る','Ctrl+0'],['ズームイン','Ctrl++'],['ズームアウト','Ctrl+-'],['保存','Ctrl+S'],['JSON出力','Ctrl+E'],['PNG出力','Ctrl+Shift+E'],['ショートカット','?']].map(([l,k],i)=>
+        h('div',{key:i,className:'skr'},h('span',null,l),h('span',{className:'skk'},h('kbd',null,k)))))):null,
+
+    // Map list modal
+    showMl?h('div',{className:'mlo',onClick:()=>sMl(false)},h('div',{className:'mlm',onClick:e=>e.stopPropagation()},
+      h('h2',null,'📂 マインドマップ一覧'),h('p',null,`${maps.length} 件のマップ`),
+      maps.sort((a,b)=>b.updatedAt-a.updatedAt).map(m=>
+        h('div',{key:m.id,className:'mi',onClick:()=>{swMap(m.id);sMl(false)}},
+          h('div',null,h('div',{className:'mit'},m.title),h('div',{className:'mid'},new Date(m.updatedAt).toLocaleDateString('ja-JP'))),
+          h('div',null,h('button',{className:'mdb',onClick:e=>{e.stopPropagation();dlMap(m.id)}},'🗑')))),
+      h('button',{className:'nmb',onClick:()=>{newMap();sMl(false)}},'＋ 新規マップ作成'))):null,
+
+    // Toasts
+    toasts.length?h('div',{className:'tc'},toasts.map(t=>h('div',{key:t.id,className:'ts'},t.message))):null
+  );
+}
+
+createRoot(document.getElementById('app')).render(h(App));
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
