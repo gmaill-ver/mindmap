@@ -88,7 +88,7 @@ export function MindMapNodes() {
           return (
             <g
               key={n.id}
-              className={`node ${isSel ? 'sel' : ''} na`}
+              className={`node ${isSel ? 'sel' : ''}`}
               transform={`translate(${n._x},${n._y})`}
               onMouseDown={e => onMouseDown(e, n.id)}
               onDoubleClick={e => onDoubleClick(e, n.id)}
@@ -181,6 +181,7 @@ export function MindMapNodes() {
                 <g
                   className="ncb"
                   transform={`translate(${collapseX},${0})`}
+                  onMouseDown={e => { e.stopPropagation(); }}
                   onClick={e => { e.stopPropagation(); toggleCollapse(n.id); }}
                 >
                   <circle r={9} />
