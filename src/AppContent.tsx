@@ -1,6 +1,5 @@
 import { Canvas } from './components/Canvas';
 import { Toolbar } from './components/Toolbar';
-import { ZoomControls } from './components/ZoomControls';
 import { Minimap } from './components/Minimap';
 import { StatusBar } from './components/StatusBar';
 import { SidePanel } from './components/SidePanel';
@@ -22,7 +21,6 @@ export function AppContent() {
     <>
       <Canvas />
       <Toolbar />
-      <ZoomControls />
       <Minimap />
       <StatusBar />
       <SidePanel />
