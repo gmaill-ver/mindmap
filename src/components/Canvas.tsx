@@ -1,4 +1,4 @@
-import { useRef, useCallback, type MouseEvent, type WheelEvent } from 'react';
+import { useRef, useCallback, useEffect, type MouseEvent, type WheelEvent, type TouchEvent as ReactTouchEvent } from 'react';
 import { useMapContext } from '../context/MapContext';
 import { Connection } from './Connection';
 import { MindMapNodes } from './Node';
@@ -18,6 +18,8 @@ export function Canvas() {
   const panStart = useRef({ x: 0, y: 0, vx: 0, vy: 0 });
   const dragStart = useRef({ x: 0, y: 0, nx: 0, ny: 0 });
   const contRef = useRef<HTMLDivElement>(null);
+  const touchRef = useRef<{ dist: number; zoom: number; cx: number; cy: number; vx: number; vy: number } | null>(null);
+  const touchPanRef = useRef<{ x: number; y: number; vx: number; vy: number } | null>(null);
 
   const onMouseDown = useCallback((e: MouseEvent) => {
     if ((e.target as HTMLElement).closest('.node') || (e.target as HTMLElement).closest('.ncb')) return;
@@ -71,6 +73,55 @@ export function Canvas() {
     setZoom(nz);
   }, [zoom, setVx, setVy, setZoom]);
 
+  const onTouchStart = useCallback((e: ReactTouchEvent) => {
+    if (e.touches.length === 2) {
+      const t0 = e.touches[0], t1 = e.touches[1];
+      const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+      const cx = (t0.clientX + t1.clientX) / 2;
+      const cy = (t0.clientY + t1.clientY) / 2;
+      touchRef.current = { dist, zoom, cx, cy, vx, vy };
+      touchPanRef.current = null;
+    } else if (e.touches.length === 1) {
+      touchPanRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, vx, vy };
+      touchRef.current = null;
+    }
+  }, [zoom, vx, vy]);
+
+  const onTouchMove = useCallback((e: ReactTouchEvent) => {
+    if (e.touches.length === 2 && touchRef.current) {
+      e.preventDefault();
+      const t0 = e.touches[0], t1 = e.touches[1];
+      const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+      const scale = dist / touchRef.current.dist;
+      const nz = Math.max(0.2, Math.min(3, touchRef.current.zoom * scale));
+      const rc = contRef.current!.getBoundingClientRect();
+      const cx = touchRef.current.cx - rc.left;
+      const cy = touchRef.current.cy - rc.top;
+      setVx(cx - (cx - touchRef.current.vx) * (nz / touchRef.current.zoom));
+      setVy(cy - (cy - touchRef.current.vy) * (nz / touchRef.current.zoom));
+      setZoom(nz);
+    } else if (e.touches.length === 1 && touchPanRef.current) {
+      const dx = e.touches[0].clientX - touchPanRef.current.x;
+      const dy = e.touches[0].clientY - touchPanRef.current.y;
+      setVx(touchPanRef.current.vx + dx);
+      setVy(touchPanRef.current.vy + dy);
+    }
+  }, [setVx, setVy, setZoom]);
+
+  const onTouchEnd = useCallback(() => {
+    touchRef.current = null;
+    touchPanRef.current = null;
+  }, []);
+
+  // Prevent default pinch-zoom on the container (passive: false needed)
+  useEffect(() => {
+    const el = contRef.current;
+    if (!el) return;
+    const prevent = (e: globalThis.TouchEvent) => { if (e.touches.length >= 2) e.preventDefault(); };
+    el.addEventListener('touchmove', prevent, { passive: false });
+    return () => el.removeEventListener('touchmove', prevent);
+  }, []);
+
   return (
     <div
       ref={contRef}
@@ -80,6 +131,9 @@ export function Canvas() {
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
       onWheel={onWheel}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
     >
       {/* Focus breadcrumbs */}
       {focusRootId && (

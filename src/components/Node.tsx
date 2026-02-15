@@ -78,11 +78,6 @@ export function MindMapNodes() {
 
           const dir = n._dir;
 
-          // Underline thickness
-          const underlineY = nh / 2 + 4;
-          const underlineW = isRoot ? 4 : 3;
-          const selUnderlineW = isRoot ? 5 : 4;
-
           // Collapse button: outside the node edge
           const collapseX = dir === -1 ? -12 : nw + 12;
 
@@ -147,16 +142,6 @@ export function MindMapNodes() {
                 {n.label}
               </text>
 
-              {/* Colored underline */}
-              <line
-                x1={0} y1={underlineY}
-                x2={nw} y2={underlineY}
-                stroke={n.color || '#8b5cf6'}
-                strokeWidth={isSel ? selUnderlineW : underlineW}
-                strokeLinecap="round"
-                opacity={isCurrentMatch ? 1 : isSearchMatch ? 0.9 : 0.8}
-              />
-
               {/* Search highlight glow */}
               {(isSearchMatch || isCurrentMatch) && (
                 <rect
@@ -184,7 +169,7 @@ export function MindMapNodes() {
               {n.image && (
                 <image
                   href={n.image.url}
-                  x={0} y={underlineY + 6}
+                  x={0} y={nh / 2 + 10}
                   width={40} height={30}
                   preserveAspectRatio="xMidYMid slice"
                   clipPath="inset(0% round 4px)"
